@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:inventry_app/core/errors/failure.dart';
+import 'package:inventry_app/core/utils/typedef.dart';
 import 'package:inventry_app/features/auth/data/datasource/datasource.dart';
 import 'package:inventry_app/features/auth/domain/entity/user_entity.dart';
 import 'package:inventry_app/features/auth/domain/repo/auth_repo.dart';
@@ -10,7 +11,7 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this.datasource);
 
   @override
-  Future<Either<Failure, void>> sendOtp(
+  FutureVoid sendOtp(
     String phone,
     Function(String verificationId) onCodeSent,
     Function(String uid)? onAutoVerified,
@@ -20,7 +21,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, UserEntity>> verifyOtp(
+  FutureEither<UserEntity> verifyOtp(
     String verificationId,
     String otp,
   ) async {
@@ -33,12 +34,12 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure,UserEntity?>> getCurrentUser() {
+  FutureEither<UserEntity?> getCurrentUser() {
     return datasource.getCurrentUser();
   }
 
   @override
-  Future<Either<Failure, void>> signOut() async {
+  FutureVoid signOut() async {
     final result = await datasource.signOut();
     return result.fold((failure) => left(failure), (_) => right(null));
   }

@@ -32,9 +32,12 @@ class CreateUserInFirestoreEvent extends UserEvent {
   final String uid;
   final String displayName;
   final String phone;
+  final String userHandle;
 
-  const CreateUserInFirestoreEvent({required this.uid, required this.displayName,required  this.phone});
+  const CreateUserInFirestoreEvent({required this.uid, required this.displayName,required  this.phone,required this.userHandle});
 
   @override
-  List<Object?> get props => [uid, displayName,phone];
+  List<Object?> get props => [uid, displayName,phone,userHandle];
 }
+
+class FetchAvatarsEvent extends UserEvent {}

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:inventry_app/core/usecase/usecase.dart';
+import 'package:inventry_app/core/utils/usecase.dart';
 import 'package:inventry_app/features/auth/domain/entity/user_entity.dart';
 import 'package:inventry_app/features/auth/domain/usecase/get_currentuser_usecase.dart';
 import 'package:inventry_app/features/auth/domain/usecase/send_otp_usecase.dart';
@@ -62,7 +62,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoadingState());
 
     final result = await verifyOtp(
-      VerifyOTPParam(verificationId: event.verificationID, otp: event.otp),
+      VerifyOTPParams(verificationId: event.verificationID, otp: event.otp),
     );
 
     result.fold(

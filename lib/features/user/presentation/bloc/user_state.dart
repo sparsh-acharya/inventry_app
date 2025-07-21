@@ -55,3 +55,12 @@ class UserCreatedInFirestore extends UserState {
   @override
   List<Object?> get props => [message];
 }
+
+class AvatarsLoading extends UserState {}
+
+class AvatarsLoaded extends UserState {
+  final List<AvatarEntity> avatars;
+  const AvatarsLoaded({required this.avatars});
+  @override
+  List<Object?> get props => [avatars];
+}

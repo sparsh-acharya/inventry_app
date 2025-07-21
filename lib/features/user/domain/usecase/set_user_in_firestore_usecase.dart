@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:inventry_app/core/errors/failure.dart';
-import 'package:inventry_app/core/usecase/usecase.dart';
+import 'package:inventry_app/core/utils/typedef.dart';
+import 'package:inventry_app/core/utils/usecase.dart';
 import 'package:inventry_app/features/user/domain/repo/user_repo.dart';
 
 class SetUserInFirestoreParams {
@@ -15,7 +16,7 @@ class SetUserInFirestoreUsecase extends UseCase<void, SetUserInFirestoreParams> 
   SetUserInFirestoreUsecase({required this.repo});
 
   @override
-  Future<Either<Failure, void>> call(SetUserInFirestoreParams params) {
+  FutureVoid call(SetUserInFirestoreParams params) {
     return repo.createUserInFirestore(uid: params.uid, displayName: params.displayName, phone: params.phone);
   }
 }

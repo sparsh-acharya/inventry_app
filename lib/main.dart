@@ -3,6 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventry_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:inventry_app/features/auth/presentation/pages/auth_wrapper.dart';
+import 'package:inventry_app/features/group/presentation/bloc/group_bloc.dart';
+import 'package:inventry_app/features/list/presentation/bloc/list_bloc.dart';
 import 'package:inventry_app/features/user/presentation/bloc/user_bloc.dart';
 import 'package:inventry_app/test.dart';
 import 'firebase_options.dart';
@@ -25,9 +27,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<AuthBloc>(
           create: (_) => di.sl<AuthBloc>()..add(GetCurrentUserEvent()),
         ),
-        BlocProvider<UserBloc>(
-          create: (_) => di.sl<UserBloc>(),
-        ),
+        BlocProvider<UserBloc>(create: (_) => di.sl<UserBloc>()),
+        BlocProvider<GroupBloc>(create: (_) => di.sl<GroupBloc>()),
+        BlocProvider<ListBloc>(create: (_) => di.sl<ListBloc>()),
       ],
       child: MaterialApp(
         title: 'Inventory App',

@@ -1,4 +1,7 @@
 import 'package:get_it/get_it.dart';
+import 'package:inventry_app/features/user/domain/usecase/clain_handle_usecase.dart';
+import 'package:inventry_app/features/user/domain/usecase/find_user_by_handle_usecase.dart';
+import 'package:inventry_app/features/user/domain/usecase/get_avatars_isecase.dart';
 import 'package:inventry_app/features/user/domain/usecase/get_currentuser_usecase.dart';
 import 'package:inventry_app/features/user/data/datasource/firebase_datasource_impl.dart';
 import 'package:inventry_app/features/user/data/datasource/user_datasource.dart';
@@ -19,13 +22,17 @@ Future<void> initUserModule() async {
   sl.registerLazySingleton(() => GetCurrentuserUsecase(repo: sl()));
   sl.registerLazySingleton(() => SetDisplaynameUsecase(repo: sl()));
   sl.registerLazySingleton(() => IsNewUserUsecase(repo: sl()));
-  sl.registerLazySingleton(() => SetUserInFirestoreUsecase(repo: sl()));
+  sl.registerLazySingleton(() => ClaimHandleUsecase(repo: sl()));
+  sl.registerLazySingleton(() => FindUserByHandleUsecase(repo: sl()));
+  sl.registerLazySingleton(() => GetAvatarsUsecase(repo: sl()));
+
   sl.registerFactory(
     () => UserBloc(
       getCurrentUser: sl(),
       setDisplayName: sl(),
       isNewUser: sl(),
-      setUserInFirestore: sl(),
+      claimUserHandle: sl(),
+      getAvatars: sl(),
     ),
   );
 }

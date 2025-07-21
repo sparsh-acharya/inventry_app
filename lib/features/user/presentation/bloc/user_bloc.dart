@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:inventry_app/core/usecase/usecase.dart';
+import 'package:inventry_app/core/utils/usecase.dart';
+import 'package:inventry_app/features/user/domain/entity/avatar_entity.dart';
 import 'package:inventry_app/features/user/domain/entity/user_entity.dart';
+import 'package:inventry_app/features/user/domain/usecase/clain_handle_usecase.dart';
+import 'package:inventry_app/features/user/domain/usecase/get_avatars_isecase.dart';
 import 'package:inventry_app/features/user/domain/usecase/get_currentuser_usecase.dart';
 import 'package:inventry_app/features/user/domain/usecase/is_new_user_usecase.dart';
 import 'package:inventry_app/features/user/domain/usecase/set_displayname_usecase.dart';
@@ -15,7 +18,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   final GetCurrentuserUsecase getCurrentUser;
   final SetDisplaynameUsecase setDisplayName;
   final IsNewUserUsecase isNewUser;
-  final SetUserInFirestoreUsecase setUserInFirestore;
+  final ClaimHandleUsecase claimUserHandle;
+  final GetAvatarsUsecase getAvatars;
 
   UserEntity? _userCache;
 
@@ -23,12 +27,14 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     required this.isNewUser,
     required this.getCurrentUser,
     required this.setDisplayName,
-    required this.setUserInFirestore,
+    required this.claimUserHandle,
+    required this.getAvatars,
   }) : super(UserInitial()) {
     on<LoadUserEvent>(_onLoadUser);
     on<UpdateDisplayNameEvent>(_onUpdateDisplayName);
     on<IsNewUserEvent>(_onIsNewUser);
     on<CreateUserInFirestoreEvent>(_onCreateUserInFirestore);
+    on<FetchAvatarsEvent>(_onFetchAvatars);
   }
 
   void _onLoadUser(LoadUserEvent event, Emitter<UserState> emit) async {
@@ -73,10 +79,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     result.fold((failure) => emit(UserError(failure.message)), (check) {
       if (check) {
         emit(NewUserState(uid: event.uid));
-      } else if (_userCache != null) {
-        emit(UserLoaded(_userCache!));
       } else {
-        emit(UserError('no user found'));
+        add(LoadUserEvent());
       }
     });
   }
@@ -86,16 +90,30 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     Emitter<UserState> emit,
   ) async {
     emit(UserLoading());
-    final result = await setUserInFirestore(
-      SetUserInFirestoreParams(
+    final result = await claimUserHandle(
+      ClaimHandleParams(
         uid: event.uid,
-        phone: event.phone,
+        handle: event.userHandle,
         displayName: event.displayName,
+        phone: event.phone,
       ),
     );
+
     result.fold(
       (failure) => emit(UserError(failure.message)),
-      (_) => emit(UserCreatedInFirestore('User created in Firestore')),
+      (_) => add(LoadUserEvent()),
+    );
+  }
+
+  Future<void> _onFetchAvatars(
+    FetchAvatarsEvent event,
+    Emitter<UserState> emit,
+  ) async {
+    emit(AvatarsLoading());
+    final result = await getAvatars(const NoParams());
+    result.fold(
+      (failure) => emit(UserError(failure.message)),
+      (avatars) => emit(AvatarsLoaded(avatars: avatars)),
     );
   }
 }

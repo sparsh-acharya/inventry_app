@@ -1,44 +1,26 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dartz/dartz.dart';
 import 'package:inventry_app/core/errors/failure.dart';
+import 'package:inventry_app/core/firebase/firebase_functions.dart';
+import 'package:inventry_app/core/utils/typedef.dart';
 import 'package:inventry_app/features/auth/data/datasource/datasource.dart';
 import 'package:inventry_app/features/auth/data/model/user_model.dart';
 
-
-
 class FirebaseAuthDatasource implements AuthDatasource {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFunctions _fireFunc = FirebaseFunctions();
 
   @override
-  Future<Either<Failure, void>> sendOTP(
+  FutureVoid sendOTP(
     String phone,
     Function(String verificationId) onCodeSent,
     Function(String uid)? onAutoVerified,
   ) async {
     try {
-      await _auth.verifyPhoneNumber(
-        phoneNumber: phone,
+      await _fireFunc.sendOTP(
+        phone: phone,
+        onCodeSent: onCodeSent,
         timeout: const Duration(seconds: 60),
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          final userCredential = await _auth.signInWithCredential(credential);
-          final user = userCredential.user;
-
-          if (user != null) {
-            onAutoVerified?.call(user.uid);
-          } else {
-            throw FirebaseAuthException(
-              code: 'user-null',
-              message: 'Auto verification failed: No user found.',
-            );
-          }
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          throw e;
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          onCodeSent(verificationId);
-        },
-        codeAutoRetrievalTimeout: (_) {},
+        onAutoVerified: onAutoVerified,
       );
       return right(null);
     } catch (e) {
@@ -47,23 +29,26 @@ class FirebaseAuthDatasource implements AuthDatasource {
   }
 
   @override
-  Future<Either<Failure, UserModel>> verifyOTP(
-      String verificationId, String otp) async {
+  FutureEither<UserModel> verifyOTP(
+    String verificationId,
+    String otp,
+  ) async {
     try {
-      final credential = PhoneAuthProvider.credential(
+      final credential = _fireFunc.verifyOTP(
         verificationId: verificationId,
-        smsCode: otp,
+        otp: otp,
       );
 
-      final userCredential =
-          await _auth.signInWithCredential(credential);
+      final userCredential = await _fireFunc.signIn(credential: credential);
 
       final user = userCredential.user;
 
       if (user != null) {
         return right(UserModel.fromFirebaseUser(user));
       } else {
-        return left(FirebaseError(message: 'OTP verification failed: No user.'));
+        return left(
+          FirebaseError(message: 'OTP verification failed: No user.'),
+        );
       }
     } catch (e) {
       return left(FirebaseError(message: _mapFirebaseError(e)));
@@ -71,9 +56,9 @@ class FirebaseAuthDatasource implements AuthDatasource {
   }
 
   @override
-  Future<Either<Failure, UserModel?>> getCurrentUser() async {
+  FutureEither<UserModel?> getCurrentUser() async {
     try {
-      final user = _auth.currentUser;
+      final user = _fireFunc.currentUser();
       if (user != null) {
         return right(UserModel.fromFirebaseUser(user));
       }
@@ -84,9 +69,9 @@ class FirebaseAuthDatasource implements AuthDatasource {
   }
 
   @override
-  Future<Either<Failure, void>> signOut() async {
+  FutureVoid signOut() async {
     try {
-      await _auth.signOut();
+      await _fireFunc.signOut();
       return right(null);
     } catch (e) {
       return left(FirebaseError(message: _mapFirebaseError(e)));

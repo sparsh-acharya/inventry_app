@@ -6,6 +6,7 @@ class UserModel extends UserEntity {
     required super.uid,
     super.displayName,
     required super.phoneNumber,
+    super.userHandle, // Add this
   });
 
   factory UserModel.fromFirebaseUser(User user) {
@@ -13,19 +14,17 @@ class UserModel extends UserEntity {
       uid: user.uid,
       displayName: user.displayName,
       phoneNumber: user.phoneNumber!,
+      // userHandle will be fetched from Firestore, not Firebase Auth
     );
   }
 
-  @override
-  UserModel copyWith({
-    String? uid,
-    String? displayName,
-    String? phoneNumber,
-  }) {
+  // You'll need a way to create a UserModel from a Firestore document
+  factory UserModel.fromFirestore(Map<String, dynamic> data) {
     return UserModel(
-      uid: uid ?? this.uid,
-      displayName: displayName ?? this.displayName,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
+      uid: data['uid'],
+      displayName: data['displayName'],
+      phoneNumber: data['phone'],
+      userHandle: data['userHandle'],
     );
   }
 }
