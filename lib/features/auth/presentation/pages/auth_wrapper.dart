@@ -59,9 +59,9 @@ class _AuthWrapperState extends State<AuthWrapper> {
               builder: (context, userState) {
                 if (userState is UserLoading) {
                   return const Scaffold(
-                    body: Center(child: CircularProgressIndicator()),
+                    body: Center(child: CircularProgressIndicator(color: Colors.green,)),
                   );
-                } else if (userState is NewUserState) {
+                } else if (userState is NewUserState || userState is AvatarsLoaded) {
                   return NewUserOnboardingPage(
                     uid: user.uid,
                     phone: user.phoneNumber,
@@ -90,13 +90,13 @@ class _AuthWrapperState extends State<AuthWrapper> {
                 }
 
                 return const Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
+                  body: Center(child: CircularProgressIndicator(color: Colors.green,)),
                 );
               },
             );
           } else if (authState is AuthLoadingState) {
             return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
+              body: Center(child: CircularProgressIndicator(color: Colors.green,)),
             );
           } else if (authState is OtpSentState) {
             return OtpVerificationPage(

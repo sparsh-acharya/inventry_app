@@ -79,6 +79,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     result.fold((failure) => emit(UserError(failure.message)), (check) {
       if (check) {
         emit(NewUserState(uid: event.uid));
+        add(FetchAvatarsEvent());
       } else {
         add(LoadUserEvent());
       }
@@ -109,7 +110,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     FetchAvatarsEvent event,
     Emitter<UserState> emit,
   ) async {
-    emit(AvatarsLoading());
+    // emit(AvatarsLoading());
     final result = await getAvatars(const NoParams());
     result.fold(
       (failure) => emit(UserError(failure.message)),

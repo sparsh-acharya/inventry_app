@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventry_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:inventry_app/features/auth/presentation/pages/auth_wrapper.dart';
 import 'package:inventry_app/features/group/presentation/bloc/group_bloc.dart';
 import 'package:inventry_app/features/list/presentation/bloc/list_bloc.dart';
 import 'package:inventry_app/features/user/presentation/bloc/user_bloc.dart';
-import 'package:inventry_app/test.dart';
+
 import 'firebase_options.dart';
 import 'injector/service_locator.dart' as di;
 

@@ -139,10 +139,9 @@ class FirebaseUserDatasourceImpl extends UserDatasource {
   @override
   FutureEither<List<AvatarModel>> getAvatars() async {
     try {
-      final snapshot = await _firestore.collection('avatars').orderBy('createdAt').get();
-      final avatars = snapshot.docs
-          .map((doc) => AvatarModel.fromMap(doc.data()))
-          .toList();
+      final snapshot = await _firestore.collection('avatars').get();
+      final avatars =
+          snapshot.docs.map((doc) => AvatarModel.fromMap(doc.data())).toList();
       return right(avatars);
     } catch (e) {
       return left(FirebaseError(message: e.toString()));

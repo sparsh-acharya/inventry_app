@@ -1,6 +1,9 @@
 // lib/features/user/presentation/pages/new_user_onboarding_page.dart
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:inventry_app/features/user/domain/entity/avatar_entity.dart';
 import '../bloc/user_bloc.dart';
 
@@ -22,16 +25,15 @@ class _NewUserOnboardingPageState extends State<NewUserOnboardingPage> {
   final _handleController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   late PageController _pageController;
-  final int _initialPage = 0;
-  List<AvatarEntity> _avatars = [];
+  final int _initialPage = 120;
 
   @override
   void initState() {
     super.initState();
-    context.read<UserBloc>().add(FetchAvatarsEvent());
+
     _pageController = PageController(
       initialPage: _initialPage,
-      viewportFraction: 0.8,
+      viewportFraction: 0.6, // Show adjacent items
     );
   }
 
@@ -39,6 +41,7 @@ class _NewUserOnboardingPageState extends State<NewUserOnboardingPage> {
   void dispose() {
     _nameController.dispose();
     _handleController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -59,33 +62,38 @@ class _NewUserOnboardingPageState extends State<NewUserOnboardingPage> {
               ),
             );
           }
-          if (state is AvatarsLoaded) {
-            setState(() {
-              _avatars = state.avatars;
-            });
-          }
         },
         builder: (context, state) {
+          if (state is AvatarsLoading) {
+            return (Center(child: Text('avatar is loading')));
+          }
           if (state is AvatarsLoaded) {
             final isLoading = state is UserLoading;
 
             return Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.all(15.0),
               child: Form(
                 key: _formKey,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _avatars.isEmpty
-                        ? const CircularProgressIndicator()
-                        : PageView.builder(
-                          itemCount: _avatars.length,
-                          physics: const ClampingScrollPhysics(),
-                          controller: _pageController,
-                          itemBuilder: (context, index) {
-                            return Text(_avatars[index].url);
-                          },
+                    state.avatars.isEmpty
+                        ? const CircularProgressIndicator(color: Colors.green)
+                        : SizedBox(
+                          height: 200,
+                          child: PageView.builder(
+                            itemCount: 10000, // Large number for looping
+                            physics: const ClampingScrollPhysics(),
+                            controller: _pageController,
+                            itemBuilder: (context, index) {
+                              final avatarIndex = index % state.avatars.length;
+                              return avatarView(
+                                index,
+                                state.avatars[avatarIndex].url,
+                              );
+                            },
+                          ),
                         ),
                     const SizedBox(height: 24),
                     const Text(
@@ -168,6 +176,36 @@ class _NewUserOnboardingPageState extends State<NewUserOnboardingPage> {
           return Center(child: Text(state.runtimeType.toString()));
         },
       ),
+    );
+  }
+
+  Widget avatarView(int index, String url) {
+    return AnimatedBuilder(
+      animation: _pageController,
+      builder: (context, child) {
+        double value = 0.0;
+        if (_pageController.position.haveDimensions) {
+          value = index.toDouble() - (_pageController.page ?? 0.0);
+          value = (value * 0.1).clamp(-1, 1);
+        }
+        return Transform(
+          alignment: FractionalOffset.center,
+          transform: Matrix4.identity()..rotateZ(pi * value)..scale(1 -(value.abs()*3))..translate(-value*500,-value.abs()*300),
+          child: avatarSvg(url),
+        );
+      },
+    );
+  }
+
+  Widget avatarSvg(String url) {
+    return SvgPicture.network(
+      url,
+      fit: BoxFit.fitHeight,
+      placeholderBuilder:
+          (BuildContext context) => Container(
+            padding: const EdgeInsets.all(11.0),
+            child: const CircularProgressIndicator(),
+          ),
     );
   }
 
