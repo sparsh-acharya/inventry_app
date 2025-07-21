@@ -7,7 +7,9 @@ abstract class UserDatasource {
   FutureEither<List<AvatarModel>> getAvatars();
   FutureVoid setDisplayName(String name);
   FutureEither<bool> isNewUser(String uid);
-  FutureVoid createUserInFirestore({required String uid, required String phone, required String displayName});
-  FutureVoid claimUserHandle({required String uid, required String handle,required String phone, required String displayName});
+  FutureVoid createUserInFirestore({required String uid, required String phone, required String displayName, String? avatarUrl});
+  FutureVoid claimUserHandle({required String uid, required String handle,required String phone, required String displayName, String? avatarUrl});
   FutureEither<UserModel?> findUserByHandle(String handle);
+  FutureEither<String?> requestFCMToken();
+  FutureVoid saveFCMToken(String token);
 }

@@ -7,12 +7,14 @@ class ClaimHandleParams {
   final String handle;
   final String displayName;
   final String phone;
+  final String? avatarUrl;
 
   ClaimHandleParams({
     required this.uid,
     required this.handle,
     required this.phone,
     required this.displayName,
+    this.avatarUrl,
   });
 }
 
@@ -28,6 +30,7 @@ class ClaimHandleUsecase extends UseCase<void, ClaimHandleParams> {
       handle: params.handle,
       displayName: params.displayName,
       phone: params.phone,
+      avatarUrl: params.avatarUrl,
     );
   }
 }

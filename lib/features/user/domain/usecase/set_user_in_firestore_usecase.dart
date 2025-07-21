@@ -8,7 +8,8 @@ class SetUserInFirestoreParams {
   final String uid;
   final String displayName;
   final String phone;
-  SetUserInFirestoreParams({required this.uid, required this.displayName,required this.phone});
+  final String? avatarUrl;
+  SetUserInFirestoreParams({required this.uid, required this.displayName,required this.phone, this.avatarUrl});
 }
 
 class SetUserInFirestoreUsecase extends UseCase<void, SetUserInFirestoreParams> {
@@ -17,6 +18,6 @@ class SetUserInFirestoreUsecase extends UseCase<void, SetUserInFirestoreParams> 
 
   @override
   FutureVoid call(SetUserInFirestoreParams params) {
-    return repo.createUserInFirestore(uid: params.uid, displayName: params.displayName, phone: params.phone);
+    return repo.createUserInFirestore(uid: params.uid, displayName: params.displayName, phone: params.phone, avatarUrl: params.avatarUrl);
   }
 }

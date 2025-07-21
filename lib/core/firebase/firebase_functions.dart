@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:inventry_app/features/user/data/models/user_model.dart';
 
 class FirebaseFunctions {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -54,8 +55,20 @@ class FirebaseFunctions {
     return await _auth.signInWithCredential(credential);
   }
 
-  User? currentUser() {
-    return _auth.currentUser;
+  User? get authUser => _auth.currentUser;
+
+  Future<UserModel?> currentUser() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      final doc = await _store.collection('users').doc(user.uid).get();
+      if (doc.exists) {
+        final data = doc.data();
+        if (data != null) {
+          return UserModel.fromFirestore(data);
+        }
+      }
+    }
+    return null;
   }
 
   Future<void> signOut() async {
@@ -63,13 +76,16 @@ class FirebaseFunctions {
   }
 
   //firestore
-  Future<void> storeDisplayname({
-    required String uid,
-    required String name,
-  }) async {
-    return await _store.collection('users').doc(uid).set({
-      'displayName': name,
-    }, SetOptions(merge: true));
+  Future<bool> storeDisplayname({required String name}) async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await user.updateDisplayName(name);
+      await _store.collection('users').doc(user.uid).set({
+        'displayName': name,
+      }, SetOptions(merge: true));
+      return true;
+    }
+    return false;
   }
 
   DocumentReference<Map<String, dynamic>> getUserDoc({required String uid}) {
@@ -80,10 +96,12 @@ class FirebaseFunctions {
     required String uid,
     required String displayName,
     required String phone,
+    String? avatarUrl,
   }) async {
     return await _store.collection('users').doc(uid).set({
       'displayName': displayName,
       'phone': phone,
+      if (avatarUrl != null) 'avatarUrl': avatarUrl,
     }, SetOptions(merge: true));
   }
 }

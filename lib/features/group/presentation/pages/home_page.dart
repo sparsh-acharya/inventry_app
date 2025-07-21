@@ -1,16 +1,18 @@
 // features/home/presentation/pages/home_page.dart
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:inventry_app/features/group/presentation/bloc/group_bloc.dart';
 import 'package:inventry_app/features/list/presentation/pages/group_page.dart';
+import 'package:inventry_app/features/user/domain/entity/user_entity.dart';
 import 'package:inventry_app/features/user/presentation/pages/user_profile_page.dart';
+
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 
 class HomePage extends StatefulWidget {
-  final String uid;
+  final UserEntity user;
 
-  const HomePage({super.key, required this.uid});
+  const HomePage({super.key, required this.user});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -22,8 +24,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    print(widget.user.avatarUrl);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<GroupBloc>().add(FetchGroupsEvent(uid: widget.uid));
+      context.read<GroupBloc>().add(FetchGroupsEvent(uid: widget.user.uid));
     });
   }
 
@@ -38,15 +41,21 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home"),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const UserProfileScreen()),
-            );
-          },
-          icon: Icon(Icons.person),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const UserProfileScreen()),
+              );
+            },
+            child: CircleAvatar(
+              child: SvgPicture.network(widget.user.avatarUrl ?? ''),
+            ),
+          ),
         ),
+
         actions: [
           IconButton(
             onPressed: () {
@@ -96,7 +105,10 @@ class _HomePageState extends State<HomePage> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder:
-                                (context) => GroupPage(group: _groups[index],userId: widget.uid),
+                                (context) => GroupPage(
+                                  group: _groups[index],
+                                  userId: widget.user.uid,
+                                ),
                           ),
                         );
                       },
@@ -106,7 +118,7 @@ class _HomePageState extends State<HomePage> {
                           context.read<GroupBloc>().add(
                             DeleteGroupEvent(
                               groupId: _groups[index].uid,
-                              adminId: widget.uid,
+                              adminId: widget.user.uid,
                             ),
                           );
                         },
@@ -140,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                         context.read<GroupBloc>().add(
                           CreateGroupEvent(
                             groupName: _groupNameCtrl.text.trim(),
-                            adminId: widget.uid,
+                            adminId: widget.user.uid,
                           ),
                         );
                         _groupNameCtrl.clear();

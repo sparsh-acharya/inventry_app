@@ -43,12 +43,14 @@ class UserRepositoryImpl extends UserRepository {
     required String uid,
     required String phone,
     required String displayName,
+    String? avatarUrl,
   }) async {
     try {
       return await datasource.createUserInFirestore(
         uid: uid,
         displayName: displayName,
         phone: phone,
+        avatarUrl: avatarUrl,
       );
     } catch (e) {
       return left(FirebaseError(message: e.toString()));
@@ -61,12 +63,14 @@ class UserRepositoryImpl extends UserRepository {
     required String handle,
     required String phone,
     required String displayName,
+    String? avatarUrl,
   }) async {
     return await datasource.claimUserHandle(
       uid: uid,
       handle: handle,
       displayName: displayName,
       phone: phone,
+      avatarUrl: avatarUrl,
     );
   }
 
@@ -78,5 +82,15 @@ class UserRepositoryImpl extends UserRepository {
   @override
   FutureEither<List<AvatarEntity>> getAvatars() async {
     return await datasource.getAvatars();
+  }
+
+  @override
+  FutureEither<String?> requestFCMToken() async {
+    return await datasource.requestFCMToken();
+  }
+
+  @override
+  FutureVoid saveFCMToken(String token) async {
+    return await datasource.saveFCMToken(token);
   }
 }

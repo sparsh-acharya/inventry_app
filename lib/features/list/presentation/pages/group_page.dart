@@ -164,9 +164,16 @@ class ItemListView extends StatelessWidget {
                       }
                     },
                   ),
-                  Text(
-                    '${item.itemCount}',
-                    style: Theme.of(context).textTheme.titleLarge,
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    transitionBuilder:
+                        (Widget child, Animation<double> animation) =>
+                            ScaleTransition(scale: animation, child: child),
+                    child: Text(
+                      '${item.itemCount}',
+                      key: ValueKey(item.itemCount),
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.add_circle_outline),

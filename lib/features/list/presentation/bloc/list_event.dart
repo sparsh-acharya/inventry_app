@@ -12,12 +12,18 @@ class AddItemEvent extends ListEvent {
   final String itemName;
   final int count;
   final String unit;
+  final bool automationEnabled;
+  final int? consumptionRate;
+  final DateTime? automationStartDate;
 
   const AddItemEvent({
     required this.groupId,
     required this.itemName,
     required this.count,
     required this.unit,
+    this.automationEnabled = false,
+    this.consumptionRate,
+    this.automationStartDate,
   });
 
   @override

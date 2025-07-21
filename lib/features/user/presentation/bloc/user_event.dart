@@ -33,11 +33,24 @@ class CreateUserInFirestoreEvent extends UserEvent {
   final String displayName;
   final String phone;
   final String userHandle;
+  final String? avatarUrl;
 
-  const CreateUserInFirestoreEvent({required this.uid, required this.displayName,required  this.phone,required this.userHandle});
+  const CreateUserInFirestoreEvent({required this.uid, required this.displayName,required  this.phone,required this.userHandle, this.avatarUrl});
 
   @override
-  List<Object?> get props => [uid, displayName,phone,userHandle];
+  List<Object?> get props => [uid, displayName,phone,userHandle, avatarUrl];
 }
 
 class FetchAvatarsEvent extends UserEvent {}
+
+class RequestFCMTokenEvent extends UserEvent {}
+
+class SaveFCMTokenEvent extends UserEvent {
+  final String token;
+
+  const SaveFCMTokenEvent(this.token);
+
+  @override
+  List<Object?> get props => [token];
+}
+

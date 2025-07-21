@@ -11,6 +11,9 @@ class ListModel extends ListEntity {
     required super.itemCount,
     required super.unit,
     required super.createdAt,
+     super.automationEnabled,
+    super.consumptionRate,
+    super.automationStartDate,
   });
 
   Map<String, dynamic> toMap() {
@@ -19,7 +22,12 @@ class ListModel extends ListEntity {
       'name': name,
       'itemCount': itemCount,
       'unit': unit,
-      'createdAt': Timestamp.fromDate(createdAt)
+      'createdAt': Timestamp.fromDate(createdAt),
+      'automationEnabled': automationEnabled,
+      'consumptionRate': consumptionRate,
+      'automationStartDate': automationStartDate != null
+          ? Timestamp.fromDate(automationStartDate!)
+          : null,
     };
   }
 
@@ -29,7 +37,12 @@ class ListModel extends ListEntity {
       name: map['name'] as String,
       itemCount: map['itemCount'] as int,
       unit: map['unit'] as String,
-      createdAt: (map['createdAt'] as Timestamp).toDate()
+      createdAt: (map['createdAt'] as Timestamp).toDate(),
+      automationEnabled: map['automationEnabled'] ?? false,
+        consumptionRate: map['consumptionRate'],
+        automationStartDate: map['automationStartDate'] != null
+            ? (map['automationStartDate'] as Timestamp).toDate()
+            : null
     );
   }
 

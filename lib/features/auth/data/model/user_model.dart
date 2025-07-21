@@ -6,7 +6,8 @@ class UserModel extends UserEntity {
     required super.uid,
     super.displayName,
     required super.phoneNumber,
-    super.userHandle, // Add this
+    super.userHandle,
+    super.avatarUrl,
   });
 
   factory UserModel.fromFirebaseUser(User user) {
@@ -14,7 +15,7 @@ class UserModel extends UserEntity {
       uid: user.uid,
       displayName: user.displayName,
       phoneNumber: user.phoneNumber!,
-      // userHandle will be fetched from Firestore, not Firebase Auth
+      // userHandle and avatarUrl will be fetched from Firestore, not Firebase Auth
     );
   }
 
@@ -25,6 +26,7 @@ class UserModel extends UserEntity {
       displayName: data['displayName'],
       phoneNumber: data['phone'],
       userHandle: data['userHandle'],
+      avatarUrl: data['avatarUrl'],
     );
   }
 }

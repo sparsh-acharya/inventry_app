@@ -1,5 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:dartz/dartz.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:inventry_app/core/errors/failure.dart';
 import 'package:inventry_app/core/firebase/firebase_functions.dart';
 import 'package:inventry_app/core/utils/typedef.dart';
@@ -58,11 +58,12 @@ class FirebaseAuthDatasource implements AuthDatasource {
   @override
   FutureEither<UserModel?> getCurrentUser() async {
     try {
-      final user = _fireFunc.currentUser();
+      final user = await _fireFunc.currentUser();
       if (user != null) {
-        return right(UserModel.fromFirebaseUser(user));
+        return Right(user as UserModel?);
+      } else {
+        return Left(FirebaseError(message: 'User not Logged In'));
       }
-      return right(null);
     } on FirebaseException catch (e) {
       return left(FirebaseError(message: e.toString()));
     }

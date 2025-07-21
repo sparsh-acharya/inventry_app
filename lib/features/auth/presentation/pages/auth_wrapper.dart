@@ -67,7 +67,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
                     phone: user.phoneNumber,
                   );
                 } else if (userState is UserLoaded) {
-                  return HomePage(uid: user.uid);
+                  return HomePage(user: userState.user);
                 } else if (userState is UserError) {
                   return Scaffold(
                     body: Center(
