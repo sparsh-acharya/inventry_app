@@ -15,9 +15,20 @@ class ListRepoImpl extends ListRepo {
     String itemName,
     int itemCount,
     String unit,
-    String groupId,
-  ) async {
-    return await datasource.addItem(itemName, itemCount, unit, groupId);
+    String groupId, {
+    bool automationEnabled = false,
+    int? consumptionRate,
+    DateTime? automationStartDate,
+  }) async {
+    return await datasource.addItem(
+      itemName,
+      itemCount,
+      unit,
+      groupId,
+      automationEnabled: automationEnabled,
+      consumptionRate: consumptionRate,
+      automationStartDate: automationStartDate,
+    );
   }
 
   @override

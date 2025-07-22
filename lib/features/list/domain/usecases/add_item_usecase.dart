@@ -8,6 +8,14 @@ class AddItemUsecase extends UseCase<void,AddItemParams>{
   AddItemUsecase({required this.repo});
   @override
   FutureEither<void> call(AddItemParams params) async {
-    return await repo.addItem(params.itemName, params.count, params.unit, params.groupId);
+    return await repo.addItem(
+      params.itemName,
+      params.count,
+      params.unit,
+      params.groupId,
+      automationEnabled: params.automationEnabled,
+      consumptionRate: params.consumptionRate,
+      automationStartDate: params.automationStartDate,
+    );
   }
 }

@@ -80,7 +80,10 @@ class _GroupPageState extends State<GroupPage> {
               groupId: widget.group.uid,
               itemName: 'test',
               count: 3,
-              unit: 'kg',
+              unit: 'hg',
+              automationEnabled: true,
+              automationStartDate: DateTime(2025,7,21),
+              consumptionRate: 3,
             ),
           );
         },

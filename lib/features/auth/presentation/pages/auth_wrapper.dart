@@ -1,6 +1,7 @@
 // lib/features/auth/presentation/pages/auth_wrapper.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventry_app/core/firebase/firebase_messaging.dart';
 import 'package:inventry_app/features/group/presentation/pages/home_page.dart';
 import 'package:inventry_app/features/auth/presentation/pages/otp_page.dart';
 import 'package:inventry_app/features/auth/presentation/pages/phone_page.dart';
@@ -67,6 +68,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
                     phone: user.phoneNumber,
                   );
                 } else if (userState is UserLoaded) {
+                  NotificationServices().initNotifications(context);
                   return HomePage(user: userState.user);
                 } else if (userState is UserError) {
                   return Scaffold(

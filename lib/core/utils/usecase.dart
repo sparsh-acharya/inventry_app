@@ -46,12 +46,18 @@ class AddItemParams {
   final int count;
   final String unit;
   final String groupId;
+  final bool automationEnabled;
+  final int? consumptionRate;
+  final DateTime? automationStartDate;
 
   AddItemParams({
     required this.itemName,
     required this.count,
     required this.unit,
     required this.groupId,
+    this.automationEnabled = false,
+    this.consumptionRate,
+    this.automationStartDate,
   });
 }
 

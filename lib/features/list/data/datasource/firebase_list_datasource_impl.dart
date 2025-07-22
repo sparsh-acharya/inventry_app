@@ -13,8 +13,11 @@ class FirebaseListDatasourceImpl extends ListDatasource {
     String itemName,
     int itemCount,
     String unit,
-    String groupId,
-  ) async {
+    String groupId, {
+    bool automationEnabled = false,
+    int? consumptionRate,
+    DateTime? automationStartDate,
+  }) async {
     try {
       final itemDoc =
           _store.collection('groups').doc(groupId).collection('items').doc();
@@ -25,6 +28,9 @@ class FirebaseListDatasourceImpl extends ListDatasource {
         itemCount: itemCount,
         unit: unit,
         createdAt: DateTime.now(),
+        automationEnabled: automationEnabled,
+        consumptionRate: consumptionRate,
+        automationStartDate: automationStartDate,
       );
       await itemDoc.set(item.toMap());
       return right(null);

@@ -1,4 +1,5 @@
 // features/home/presentation/pages/home_page.dart
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -24,6 +25,22 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Got a message whilst in the foreground!');
+      print('Message data: ${message.data}');
+
+      if (message.notification != null) {
+        print('Message also contained a notification: ${message.notification}');
+        // Optional: Show a snackbar or local notification
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${message.notification?.title}\n${message.notification?.body}',
+            ),
+          ),
+        );
+      }
+    });
     print(widget.user.avatarUrl);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<GroupBloc>().add(FetchGroupsEvent(uid: widget.user.uid));

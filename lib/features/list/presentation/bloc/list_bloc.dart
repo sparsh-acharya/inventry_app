@@ -41,6 +41,9 @@ class ListBloc extends Bloc<ListEvent, ListState> {
         count: event.count,
         unit: event.unit,
         groupId: event.groupId,
+        automationEnabled: event.automationEnabled,
+        consumptionRate: event.consumptionRate,
+        automationStartDate: event.automationStartDate,
       ),
     );
     result.fold(
