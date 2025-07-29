@@ -6,6 +6,7 @@ import 'package:inventry_app/features/auth/domain/usecase/get_currentuser_usecas
 import 'package:inventry_app/features/auth/domain/usecase/send_otp_usecase.dart';
 import 'package:inventry_app/features/auth/domain/usecase/signout_usecase.dart';
 import 'package:inventry_app/features/auth/domain/usecase/verify_opt_usecase.dart';
+import 'package:inventry_app/features/user/domain/usecase/delete_fcm_usecase.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -15,12 +16,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final VerifyOptUsecase verifyOtp;
   final GetCurrentuserUsecase getCurrentUser;
   final SignoutUsecase signOut;
+  final DeleteFCMTokenUsecase deleteFcm;
 
   AuthBloc({
     required this.sendOtp,
     required this.verifyOtp,
     required this.getCurrentUser,
     required this.signOut,
+    required this.deleteFcm,
   }) : super(AuthInitialState()) {
     on<SendOTPEvent>(_onSendOtp);
     on<VerifyOTPEvent>(_onVerifyOtp);
@@ -78,7 +81,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     final result = await getCurrentUser(NoParams());
-    UserEntity? user;
+    AuthUserEntity? user;
     result.fold(
       (failure) => emit(AuthErrorState(failure.message)),
       (entity) => user = entity,
@@ -96,7 +99,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     final result = await getCurrentUser(NoParams());
-    UserEntity? user;
+    AuthUserEntity? user;
     result.fold(
       (failure) => emit(AuthErrorState(failure.message)),
       (entity) => user = entity,
@@ -111,7 +114,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onSignOut(SignOutEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoadingState());
-
+    await deleteFcm(NoParams());
     final result = await signOut(NoParams());
 
     result.fold(

@@ -15,6 +15,10 @@ class EditItemUsecase extends UseCase<void, EditItemParams> {
       itemName: params.itemName,
       itemCount: params.count,
       unit: params.unit,
+      automationEnabled: params.automationEnabled,
+      consumptionRate: params.consumptionRate,
+      notificationThreshold: params.notificationThreshold,
+      automationStartDate: params.automationStartDate,
     );
   }
 }

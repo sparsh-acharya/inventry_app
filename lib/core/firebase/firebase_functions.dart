@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:inventry_app/features/auth/data/model/user_model.dart';
 import 'package:inventry_app/features/user/data/models/user_model.dart';
 
 class FirebaseFunctions {
@@ -56,19 +57,25 @@ class FirebaseFunctions {
   }
 
   User? get authUser => _auth.currentUser;
-
-  Future<UserModel?> currentUser() async {
+  
+  Future<UserModel?> getUserData() async {
     final user = _auth.currentUser;
     if (user != null) {
-      final doc = await _store.collection('users').doc(user.uid).get();
-      if (doc.exists) {
-        final data = doc.data();
-        if (data != null) {
-          return UserModel.fromFirestore(data);
-        }
-      }
+      final ref = getUserDoc(uid: user.uid);
+      final doc = await ref.get();
+      return UserModel.fromFirestore(doc.data()!);
     }
     return null;
+  }
+
+  Future<AuthUserModel?> currentUser() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      // Directly create a UserModel from the Firebase Auth user object.
+      // The full profile data will be loaded later by the UserBloc.
+      return AuthUserModel.fromFirebaseUser(user);
+    }
+    return null; // User is genuinely not authenticated.
   }
 
   Future<void> signOut() async {

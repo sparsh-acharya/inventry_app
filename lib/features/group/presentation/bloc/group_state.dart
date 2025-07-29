@@ -52,3 +52,25 @@ final class UserFoundState extends GroupState {
 }
 
 final class UserAddedToGroupState extends GroupState {}
+
+final class GroupMembersLoadingState extends GroupState {}
+
+final class GroupMembersLoadedState extends GroupState {
+  final List<UserEntity> members;
+
+  const GroupMembersLoadedState({required this.members});
+
+  @override
+  List<Object> get props => [members];
+}
+
+final class UserRemovedFromGroupState extends GroupState {}
+
+final class GroupNameUpdatedState extends GroupState {
+  final String newName;
+
+  const GroupNameUpdatedState({required this.newName});
+
+  @override
+  List<Object> get props => [newName];
+}

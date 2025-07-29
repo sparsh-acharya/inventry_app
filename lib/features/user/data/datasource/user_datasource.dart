@@ -12,4 +12,5 @@ abstract class UserDatasource {
   FutureEither<UserModel?> findUserByHandle(String handle);
   FutureEither<String?> requestFCMToken();
   FutureVoid saveFCMToken(String token);
+  FutureVoid deleteFCMToken();
 }

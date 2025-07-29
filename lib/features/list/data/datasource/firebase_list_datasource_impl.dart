@@ -16,6 +16,7 @@ class FirebaseListDatasourceImpl extends ListDatasource {
     String groupId, {
     bool automationEnabled = false,
     int? consumptionRate,
+    int? notificationThreshold,
     DateTime? automationStartDate,
   }) async {
     try {
@@ -28,8 +29,10 @@ class FirebaseListDatasourceImpl extends ListDatasource {
         itemCount: itemCount,
         unit: unit,
         createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
         automationEnabled: automationEnabled,
         consumptionRate: consumptionRate,
+        notificationThreshold: notificationThreshold,
         automationStartDate: automationStartDate,
       );
       await itemDoc.set(item.toMap());
@@ -47,7 +50,7 @@ class FirebaseListDatasourceImpl extends ListDatasource {
           .doc(groupId)
           .collection('items');
       return itemRef
-          .orderBy('createdAt', descending: true)
+          .orderBy('updatedAt', descending: true)
           .snapshots()
           .map(
             (snapshot) =>
@@ -85,14 +88,29 @@ class FirebaseListDatasourceImpl extends ListDatasource {
     required String itemName,
     required int itemCount,
     required String unit,
+    bool automationEnabled = false,
+    int? consumptionRate,
+    int? notificationThreshold,
+    DateTime? automationStartDate,
   }) async {
     try {
+      final updateData = {
+        'name': itemName,
+        'itemCount': itemCount,
+        'unit': unit,
+        'updatedAt': Timestamp.fromDate(DateTime.now()),
+        'automationEnabled': automationEnabled,
+        'consumptionRate': consumptionRate,
+        'notificationThreshold': notificationThreshold,
+        'automationStartDate': automationStartDate,
+      };
+
       await _store
           .collection('groups')
           .doc(groupId)
           .collection('items')
           .doc(itemId)
-          .update({'name': itemName, 'itemCount': itemCount, 'unit': unit});
+          .update(updateData);
       return right(null);
     } catch (e) {
       return left(FirebaseError(message: e.toString()));

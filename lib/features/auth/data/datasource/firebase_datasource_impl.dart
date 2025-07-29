@@ -29,7 +29,7 @@ class FirebaseAuthDatasource implements AuthDatasource {
   }
 
   @override
-  FutureEither<UserModel> verifyOTP(
+  FutureEither<AuthUserModel> verifyOTP(
     String verificationId,
     String otp,
   ) async {
@@ -44,7 +44,7 @@ class FirebaseAuthDatasource implements AuthDatasource {
       final user = userCredential.user;
 
       if (user != null) {
-        return right(UserModel.fromFirebaseUser(user));
+        return right(AuthUserModel.fromFirebaseUser(user));
       } else {
         return left(
           FirebaseError(message: 'OTP verification failed: No user.'),
@@ -56,13 +56,13 @@ class FirebaseAuthDatasource implements AuthDatasource {
   }
 
   @override
-  FutureEither<UserModel?> getCurrentUser() async {
+  FutureEither<AuthUserModel?> getCurrentUser() async {
     try {
       final user = await _fireFunc.currentUser();
       if (user != null) {
-        return Right(user as UserModel?);
+        return Right(user as AuthUserModel?);
       } else {
-        return Left(FirebaseError(message: 'User not Logged In'));
+        return Right(null);
       }
     } on FirebaseException catch (e) {
       return left(FirebaseError(message: e.toString()));

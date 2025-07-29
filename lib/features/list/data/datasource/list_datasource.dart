@@ -9,6 +9,7 @@ abstract class ListDatasource {
     String groupId, {
     bool automationEnabled = false,
     int? consumptionRate,
+    int? notificationThreshold,
     DateTime? automationStartDate,
   });
   Stream<List<ListModel>> getItems(String groupId);
@@ -19,5 +20,9 @@ abstract class ListDatasource {
     required String itemName,
     required int itemCount,
     required String unit,
+    bool automationEnabled = false,
+    int? consumptionRate,
+    int? notificationThreshold,
+    DateTime? automationStartDate,
   });
 }

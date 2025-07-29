@@ -2,6 +2,7 @@ import 'package:inventry_app/core/utils/typedef.dart';
 import 'package:inventry_app/features/group/data/datasource/group_datasource.dart';
 import 'package:inventry_app/features/group/domain/entities/group_entity.dart';
 import 'package:inventry_app/features/group/domain/repo/group_repo.dart';
+import 'package:inventry_app/features/user/domain/entity/user_entity.dart';
 
 class GroupRepoImpl extends GroupRepo {
   final GroupDatasource datasource;
@@ -26,5 +27,20 @@ class GroupRepoImpl extends GroupRepo {
   @override
   FutureVoid addUserToGroup({required String groupId, required String userId}) async {
     return await datasource.addUserToGroup(groupId: groupId, userId: userId);
+  }
+
+  @override
+  FutureEither<List<UserEntity>> getGroupMembers(String groupId) async {
+    return await datasource.getGroupMembers(groupId);
+  }
+
+  @override
+  FutureVoid removeUserFromGroup({required String groupId, required String userId}) async {
+    return await datasource.removeUserFromGroup(groupId: groupId, userId: userId);
+  }
+
+  @override
+  FutureVoid updateGroupName(String groupId, String newName) async {
+    return await datasource.updateGroupName(groupId, newName);
   }
 }

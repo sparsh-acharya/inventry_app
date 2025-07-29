@@ -21,7 +21,7 @@ class OtpSentState extends AuthState {
 }
 
 class AuthenticatedState extends AuthState {
-  final UserEntity user;
+  final AuthUserEntity user;
   const AuthenticatedState(this.user);
 
   @override

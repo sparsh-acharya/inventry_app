@@ -48,6 +48,7 @@ class AddItemParams {
   final String groupId;
   final bool automationEnabled;
   final int? consumptionRate;
+  final int? notificationThreshold;
   final DateTime? automationStartDate;
 
   AddItemParams({
@@ -57,6 +58,7 @@ class AddItemParams {
     required this.groupId,
     this.automationEnabled = false,
     this.consumptionRate,
+    this.notificationThreshold,
     this.automationStartDate,
   });
 }
@@ -74,6 +76,10 @@ class EditItemParams {
   final String itemName;
   final int count;
   final String unit;
+  final bool automationEnabled;
+  final int? consumptionRate;
+  final int? notificationThreshold;
+  final DateTime? automationStartDate;
 
   EditItemParams({
     required this.groupId,
@@ -81,6 +87,10 @@ class EditItemParams {
     required this.itemName,
     required this.count,
     required this.unit,
+    this.automationEnabled = false,
+    this.consumptionRate,
+    this.notificationThreshold,
+    this.automationStartDate,
   });
 }
 
@@ -89,4 +99,23 @@ class AddUserToGroupParams {
   final String userId;
 
   AddUserToGroupParams({required this.groupId, required this.userId});
+}
+
+class RemoveUserFromGroupParams {
+  final String groupId;
+  final String userId;
+
+  RemoveUserFromGroupParams({
+    required this.groupId,
+    required this.userId,
+  });
+}
+class UpdateGroupnameParams {
+  final String groupId;
+  final String newName;
+
+  UpdateGroupnameParams({
+    required this.groupId,
+    required this.newName,
+  });
 }

@@ -2,11 +2,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inventry_app/core/theme/app_theme.dart';
 import 'package:inventry_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:inventry_app/features/auth/presentation/pages/auth_wrapper.dart';
 import 'package:inventry_app/features/group/presentation/bloc/group_bloc.dart';
 import 'package:inventry_app/features/list/presentation/bloc/list_bloc.dart';
 import 'package:inventry_app/features/user/presentation/bloc/user_bloc.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 import 'firebase_options.dart';
 import 'injector/service_locator.dart' as di;
@@ -23,6 +25,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await FirebaseAppCheck.instance.activate(
+    // Use the debug provider for development purposes.
+    androidProvider: AndroidProvider.debug,
+    appleProvider: AppleProvider.debug,
+  );
   await di.init();
   runApp(const MyApp());
 }
@@ -44,10 +51,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Inventory App',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-          useMaterial3: true,
-        ),
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.light, // Automatically switch based on system preference
         home: const AuthWrapper(),
       ),
     );

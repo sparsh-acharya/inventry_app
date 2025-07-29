@@ -54,3 +54,4 @@ class SaveFCMTokenEvent extends UserEvent {
   List<Object?> get props => [token];
 }
 
+class ResetUserEvent extends UserEvent {}

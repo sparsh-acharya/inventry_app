@@ -4,6 +4,7 @@ import 'package:inventry_app/core/errors/failure.dart';
 import 'package:inventry_app/core/utils/typedef.dart';
 import 'package:inventry_app/features/group/data/datasource/group_datasource.dart';
 import 'package:inventry_app/features/group/data/models/group_model.dart';
+import 'package:inventry_app/features/user/data/models/user_model.dart';
 
 class FirebaseGroupDatasourceImpl extends GroupDatasource {
   @override
@@ -98,6 +99,89 @@ class FirebaseGroupDatasourceImpl extends GroupDatasource {
       return right(null);
     } catch (e) {
       // The error message from our check will be caught here
+      return left(FirebaseError(message: e.toString()));
+    }
+  }
+
+  @override
+  FutureEither<List<UserModel>> getGroupMembers(String groupId) async {
+    try {
+      final groupDoc = FirebaseFirestore.instance
+          .collection('groups')
+          .doc(groupId);
+      final groupSnapshot = await groupDoc.get();
+
+      if (!groupSnapshot.exists) {
+        return left(FirebaseError(message: "Group does not exist."));
+      }
+
+      final memberIds = List<String>.from(
+        groupSnapshot.data()?['members'] ?? [],
+      );
+      final users = await Future.wait(
+        memberIds.map((id) async {
+          final userDoc = FirebaseFirestore.instance
+              .collection('users')
+              .doc(id);
+          final userSnapshot = await userDoc.get();
+          return userSnapshot.exists
+              ? UserModel.fromFirestore(userSnapshot.data()!)
+              : null;
+        }),
+      );
+
+      return right(users.whereType<UserModel>().toList());
+    } catch (e) {
+      return left(FirebaseError(message: e.toString()));
+    }
+  }
+
+  @override
+  FutureVoid removeUserFromGroup({
+    required String groupId,
+    required String userId,
+  }) async {
+    final groupDocRef = FirebaseFirestore.instance
+        .collection('groups')
+        .doc(groupId);
+
+    try {
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        final groupSnapshot = await transaction.get(groupDocRef);
+
+        if (!groupSnapshot.exists) {
+          throw Exception("Group does not exist.");
+        }
+
+        final members = List<String>.from(
+          groupSnapshot.data()?['members'] ?? [],
+        );
+        if (!members.contains(userId)) {
+          throw Exception("User is not a member of this group.");
+        }
+
+        transaction.update(groupDocRef, {
+          'members': FieldValue.arrayRemove([userId]),
+        });
+      });
+      return right(null);
+    } catch (e) {
+      return left(FirebaseError(message: e.toString()));
+    }
+  }
+
+  @override
+  FutureVoid updateGroupName(String groupId, String newName) async {
+    try {
+      final groupDocRef = FirebaseFirestore.instance
+          .collection('groups')
+          .doc(groupId);
+
+      await groupDocRef.update({
+        'groupName': newName,
+      });
+      return right(null);
+    } catch (e) {
       return left(FirebaseError(message: e.toString()));
     }
   }

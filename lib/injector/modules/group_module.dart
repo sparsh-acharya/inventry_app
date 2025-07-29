@@ -6,7 +6,10 @@ import 'package:inventry_app/features/group/domain/repo/group_repo.dart';
 import 'package:inventry_app/features/group/domain/usecases/add_user_to_group_usecase.dart';
 import 'package:inventry_app/features/group/domain/usecases/create_group_usecase.dart';
 import 'package:inventry_app/features/group/domain/usecases/delete_group_usecase.dart';
+import 'package:inventry_app/features/group/domain/usecases/get_group_members_usecase.dart';
 import 'package:inventry_app/features/group/domain/usecases/get_groups_usecase.dart';
+import 'package:inventry_app/features/group/domain/usecases/remove_user_from_group_usecase.dart';
+import 'package:inventry_app/features/group/domain/usecases/update_groupname_usecase.dart';
 import 'package:inventry_app/features/group/presentation/bloc/group_bloc.dart';
 
 final sl = GetIt.I;
@@ -20,6 +23,9 @@ Future<void> initGroupModule() async {
   sl.registerLazySingleton(() => CreateGroupUsecase(repo: sl()));
   sl.registerLazySingleton(() => DeleteGroupUsecase(repo: sl()));
   sl.registerLazySingleton(() => AddUserToGroupUsecase(repo: sl()));
+  sl.registerLazySingleton(() => GetGroupMembersUsecase(groupRepo: sl()));
+  sl.registerLazySingleton(() => RemoveUserFromGroupUsecase(groupRepo: sl()));
+  sl.registerLazySingleton(() => UpdateGroupnameUsecase(groupRepo: sl()));
   sl.registerFactory(
     () => GroupBloc(
       getGroups: sl(),
@@ -27,6 +33,9 @@ Future<void> initGroupModule() async {
       deleteGroup: sl(),
       findUserByHandle: sl(),
       addUserToGroup: sl(),
+      getGroupMembers: sl(),
+      removeUserFromGroup: sl(),
+      updateGroupName: sl(),
     ),
   );
 }

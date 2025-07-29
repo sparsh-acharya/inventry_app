@@ -5,13 +5,13 @@ import 'package:inventry_app/core/utils/usecase.dart';
 import 'package:inventry_app/features/auth/domain/entity/user_entity.dart';
 import 'package:inventry_app/features/auth/domain/repo/auth_repo.dart';
 
-class GetCurrentuserUsecase extends UseCase<UserEntity?,NoParams> {
+class GetCurrentuserUsecase extends UseCase<AuthUserEntity?,NoParams> {
   final AuthRepository repo;
 
   GetCurrentuserUsecase({required this.repo});
 
   @override
-  FutureEither<UserEntity?> call(NoParams param) {
+  FutureEither<AuthUserEntity?> call(NoParams param) {
     return repo.getCurrentUser();
   }
 }

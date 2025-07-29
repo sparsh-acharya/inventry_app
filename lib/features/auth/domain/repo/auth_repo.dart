@@ -10,9 +10,9 @@ abstract class AuthRepository {
     Function(String uid)? onAutoVerified,
   );
 
-  FutureEither<UserEntity> verifyOtp(String verificationId, String otp);
+  FutureEither<AuthUserEntity> verifyOtp(String verificationId, String otp);
 
-  FutureEither<UserEntity?> getCurrentUser();
+  FutureEither<AuthUserEntity?> getCurrentUser();
 
   FutureVoid signOut();
 }

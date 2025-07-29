@@ -14,6 +14,7 @@ class AddItemEvent extends ListEvent {
   final String unit;
   final bool automationEnabled;
   final int? consumptionRate;
+  final int? notificationThreshold;
   final DateTime? automationStartDate;
 
   const AddItemEvent({
@@ -23,6 +24,7 @@ class AddItemEvent extends ListEvent {
     required this.unit,
     this.automationEnabled = false,
     this.consumptionRate,
+    this.notificationThreshold,
     this.automationStartDate,
   });
 
@@ -64,6 +66,10 @@ class EditItemEvent extends ListEvent {
   final String itemName;
   final int count;
   final String unit;
+  final bool automationEnabled;
+  final int? consumptionRate;
+  final int? notificationThreshold;
+  final DateTime? automationStartDate;
 
   const EditItemEvent({
     required this.groupId,
@@ -71,8 +77,21 @@ class EditItemEvent extends ListEvent {
     required this.itemName,
     required this.count,
     required this.unit,
+    this.automationEnabled = false,
+    this.consumptionRate,
+    this.notificationThreshold,
+    this.automationStartDate,
   });
 
   @override
-  List<Object> get props => [groupId, itemId, itemName, count, unit];
+  List<Object> get props => [
+    groupId,
+    itemId,
+    itemName,
+    count,
+    unit,
+    automationEnabled,
+    consumptionRate ?? 0,
+    automationStartDate ?? DateTime.now()
+  ];
 }

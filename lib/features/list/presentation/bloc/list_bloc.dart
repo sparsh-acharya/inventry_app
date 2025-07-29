@@ -43,6 +43,7 @@ class ListBloc extends Bloc<ListEvent, ListState> {
         groupId: event.groupId,
         automationEnabled: event.automationEnabled,
         consumptionRate: event.consumptionRate,
+        notificationThreshold: event.notificationThreshold,
         automationStartDate: event.automationStartDate,
       ),
     );
@@ -92,6 +93,10 @@ class ListBloc extends Bloc<ListEvent, ListState> {
         itemName: event.itemName,
         count: event.count,
         unit: event.unit,
+        automationEnabled: event.automationEnabled,
+        consumptionRate: event.consumptionRate,
+        notificationThreshold: event.notificationThreshold,
+        automationStartDate: event.automationStartDate,
       ),
     );
 

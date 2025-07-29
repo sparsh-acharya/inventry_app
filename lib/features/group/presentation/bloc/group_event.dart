@@ -45,7 +45,6 @@ class SearchUserByHandleEvent extends GroupEvent {
   List<Object> get props => [handle];
 }
 
-
 class AddUserToGroupEvent extends GroupEvent {
   final String groupId;
   final String userId;
@@ -54,4 +53,39 @@ class AddUserToGroupEvent extends GroupEvent {
 
   @override
   List<Object> get props => [groupId, userId];
+}
+
+class GetGroupMembersEvent extends GroupEvent {
+  final String groupId;
+
+  const GetGroupMembersEvent({required this.groupId});
+
+  @override
+  List<Object> get props => [groupId];
+}
+
+class RemoveUserFromGroupEvent extends GroupEvent {
+  final String groupId;
+  final String userId;
+
+  const RemoveUserFromGroupEvent({
+    required this.groupId,
+    required this.userId,
+  });
+
+  @override
+  List<Object> get props => [groupId, userId];
+}
+
+class UpdateGroupNameEvent extends GroupEvent {
+  final String groupId;
+  final String newName;
+
+  const UpdateGroupNameEvent({
+    required this.groupId,
+    required this.newName,
+  });
+
+  @override
+  List<Object> get props => [groupId, newName];
 }

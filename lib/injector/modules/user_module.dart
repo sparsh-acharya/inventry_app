@@ -4,6 +4,7 @@ import 'package:inventry_app/features/user/data/datasource/user_datasource.dart'
 import 'package:inventry_app/features/user/data/repo/user_repo_impl.dart';
 import 'package:inventry_app/features/user/domain/repo/user_repo.dart';
 import 'package:inventry_app/features/user/domain/usecase/clain_handle_usecase.dart';
+import 'package:inventry_app/features/user/domain/usecase/delete_fcm_usecase.dart';
 import 'package:inventry_app/features/user/domain/usecase/find_user_by_handle_usecase.dart';
 import 'package:inventry_app/features/user/domain/usecase/get_avatars_isecase.dart';
 import 'package:inventry_app/features/user/domain/usecase/get_currentuser_usecase.dart';
@@ -28,6 +29,7 @@ Future<void> initUserModule() async {
   sl.registerLazySingleton(() => GetAvatarsUsecase(repo: sl()));
   sl.registerLazySingleton(() => RequestFCMTokenUsecase(repo: sl()));
   sl.registerLazySingleton(() => SaveFCMTokenUsecase(repo: sl()));
+  sl.registerLazySingleton(() => DeleteFCMTokenUsecase(repo: sl()));
 
   sl.registerFactory(
     () => UserBloc(

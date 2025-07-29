@@ -18,6 +18,7 @@ class ListRepoImpl extends ListRepo {
     String groupId, {
     bool automationEnabled = false,
     int? consumptionRate,
+    int? notificationThreshold,
     DateTime? automationStartDate,
   }) async {
     return await datasource.addItem(
@@ -27,6 +28,7 @@ class ListRepoImpl extends ListRepo {
       groupId,
       automationEnabled: automationEnabled,
       consumptionRate: consumptionRate,
+      notificationThreshold: notificationThreshold,
       automationStartDate: automationStartDate,
     );
   }
@@ -56,6 +58,10 @@ class ListRepoImpl extends ListRepo {
     required String itemName,
     required int itemCount,
     required String unit,
+    bool automationEnabled = false,
+    int? consumptionRate,
+    int? notificationThreshold,
+    DateTime? automationStartDate,
   }) async {
     return await datasource.editItem(
       groupId: groupId,
@@ -63,6 +69,10 @@ class ListRepoImpl extends ListRepo {
       itemName: itemName,
       itemCount: itemCount,
       unit: unit,
+      automationEnabled: automationEnabled,
+      consumptionRate: consumptionRate,
+      notificationThreshold: notificationThreshold,
+      automationStartDate: automationStartDate,
     );
   }
 }

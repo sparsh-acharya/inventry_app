@@ -93,4 +93,9 @@ class UserRepositoryImpl extends UserRepository {
   FutureVoid saveFCMToken(String token) async {
     return await datasource.saveFCMToken(token);
   }
+
+  @override
+  FutureVoid deleteFCMToken() async {
+    return await datasource.deleteFCMToken();
+  }
 }

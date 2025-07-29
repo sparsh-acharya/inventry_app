@@ -1,11 +1,11 @@
-class UserEntity {
+class AuthUserEntity {
   final String uid;
   final String? displayName;
   final String phoneNumber;
   final String? userHandle;
   final String? avatarUrl;
 
-  const UserEntity({
+  const AuthUserEntity({
     required this.uid,
     this.displayName,
     required this.phoneNumber,
@@ -13,14 +13,14 @@ class UserEntity {
     this.avatarUrl,
   });
 
-  UserEntity copyWith({
+  AuthUserEntity copyWith({
     String? uid,
     String? displayName,
     String? phoneNumber,
     String? userHandle,
     String? avatarUrl,
   }) {
-    return UserEntity(
+    return AuthUserEntity(
       uid: uid ?? this.uid,
       displayName: displayName ?? this.displayName,
       phoneNumber: phoneNumber ?? this.phoneNumber,

@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,8 +10,10 @@ class ListModel extends ListEntity {
     required super.itemCount,
     required super.unit,
     required super.createdAt,
-     super.automationEnabled,
+    required super.updatedAt,
+    super.automationEnabled,
     super.consumptionRate,
+    super.notificationThreshold,
     super.automationStartDate,
   });
 
@@ -23,11 +24,14 @@ class ListModel extends ListEntity {
       'itemCount': itemCount,
       'unit': unit,
       'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': Timestamp.fromDate(updatedAt),
       'automationEnabled': automationEnabled,
       'consumptionRate': consumptionRate,
-      'automationStartDate': automationStartDate != null
-          ? Timestamp.fromDate(automationStartDate!)
-          : null,
+      'notificationThreshold': notificationThreshold,
+      'automationStartDate':
+          automationStartDate != null
+              ? Timestamp.fromDate(automationStartDate!)
+              : null,
     };
   }
 
@@ -38,11 +42,14 @@ class ListModel extends ListEntity {
       itemCount: map['itemCount'] as int,
       unit: map['unit'] as String,
       createdAt: (map['createdAt'] as Timestamp).toDate(),
+      updatedAt: (map['updatedAt'] as Timestamp).toDate(),
       automationEnabled: map['automationEnabled'] ?? false,
-        consumptionRate: map['consumptionRate'],
-        automationStartDate: map['automationStartDate'] != null
-            ? (map['automationStartDate'] as Timestamp).toDate()
-            : null
+      consumptionRate: map['consumptionRate'],
+      notificationThreshold: map['notificationThreshold'],
+      automationStartDate:
+          map['automationStartDate'] != null
+              ? (map['automationStartDate'] as Timestamp).toDate()
+              : null,
     );
   }
 

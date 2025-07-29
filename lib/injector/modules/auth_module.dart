@@ -25,6 +25,7 @@ Future<void> initAuthModule() async {
       verifyOtp: sl(),
       getCurrentUser: sl(),
       signOut: sl(),
+      deleteFcm: sl(),
     ),
   );
 }

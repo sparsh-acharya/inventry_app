@@ -9,6 +9,7 @@ abstract class ListRepo {
     String groupId, {
     bool automationEnabled = false,
     int? consumptionRate,
+    int? notificationThreshold,
     DateTime? automationStartDate,
   });
   FutureEither<Stream<List<ListEntity>>> getItems(String groupId);
@@ -19,5 +20,9 @@ abstract class ListRepo {
     required String itemName,
     required int itemCount,
     required String unit,
+    bool automationEnabled = false,
+    int? consumptionRate,
+    int? notificationThreshold,
+    DateTime? automationStartDate,
   });
 }

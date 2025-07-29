@@ -43,6 +43,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<FetchAvatarsEvent>(_onFetchAvatars);
     on<RequestFCMTokenEvent>(_onRequestToken);
     on<SaveFCMTokenEvent>(_onSaveFcm);
+    on<ResetUserEvent>(_onResetUser);
+  }
+
+  void _onResetUser(ResetUserEvent event, Emitter<UserState> emit) {
+    _userCache = null;
+    emit(UserInitial());
   }
 
   void _onLoadUser(LoadUserEvent event, Emitter<UserState> emit) async {

@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:inventry_app/features/auth/domain/entity/user_entity.dart';
 
-class UserModel extends UserEntity {
-  const UserModel({
+class AuthUserModel extends AuthUserEntity {
+  const AuthUserModel({
     required super.uid,
     super.displayName,
     required super.phoneNumber,
@@ -10,8 +10,8 @@ class UserModel extends UserEntity {
     super.avatarUrl,
   });
 
-  factory UserModel.fromFirebaseUser(User user) {
-    return UserModel(
+  factory AuthUserModel.fromFirebaseUser(User user) {
+    return AuthUserModel(
       uid: user.uid,
       displayName: user.displayName,
       phoneNumber: user.phoneNumber!,
@@ -20,8 +20,8 @@ class UserModel extends UserEntity {
   }
 
   // You'll need a way to create a UserModel from a Firestore document
-  factory UserModel.fromFirestore(Map<String, dynamic> data) {
-    return UserModel(
+  factory AuthUserModel.fromFirestore(Map<String, dynamic> data) {
+    return AuthUserModel(
       uid: data['uid'],
       displayName: data['displayName'],
       phoneNumber: data['phone'],

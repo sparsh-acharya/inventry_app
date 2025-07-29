@@ -15,6 +15,7 @@ class AddItemUsecase extends UseCase<void,AddItemParams>{
       params.groupId,
       automationEnabled: params.automationEnabled,
       consumptionRate: params.consumptionRate,
+      notificationThreshold: params.notificationThreshold,
       automationStartDate: params.automationStartDate,
     );
   }

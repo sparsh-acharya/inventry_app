@@ -8,7 +8,10 @@ import 'package:inventry_app/features/group/domain/entities/group_entity.dart';
 import 'package:inventry_app/features/group/domain/usecases/add_user_to_group_usecase.dart';
 import 'package:inventry_app/features/group/domain/usecases/create_group_usecase.dart';
 import 'package:inventry_app/features/group/domain/usecases/delete_group_usecase.dart';
+import 'package:inventry_app/features/group/domain/usecases/get_group_members_usecase.dart';
 import 'package:inventry_app/features/group/domain/usecases/get_groups_usecase.dart';
+import 'package:inventry_app/features/group/domain/usecases/remove_user_from_group_usecase.dart';
+import 'package:inventry_app/features/group/domain/usecases/update_groupname_usecase.dart';
 import 'package:inventry_app/features/user/domain/entity/user_entity.dart';
 import 'package:inventry_app/features/user/domain/usecase/find_user_by_handle_usecase.dart';
 
@@ -21,18 +24,28 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
   final DeleteGroupUsecase deleteGroup;
   final FindUserByHandleUsecase findUserByHandle;
   final AddUserToGroupUsecase addUserToGroup;
+  final GetGroupMembersUsecase getGroupMembers;
+  final RemoveUserFromGroupUsecase removeUserFromGroup;
+  final UpdateGroupnameUsecase updateGroupName;
+
   GroupBloc({
     required this.getGroups,
     required this.createGroup,
     required this.deleteGroup,
     required this.findUserByHandle,
     required this.addUserToGroup,
+    required this.getGroupMembers,
+    required this.removeUserFromGroup,
+    required this.updateGroupName,
   }) : super(GroupInitialState()) {
     on<CreateGroupEvent>(_onCreateGroup);
     on<FetchGroupsEvent>(_onFetchGroup);
     on<DeleteGroupEvent>(_onDeleteGroup);
     on<SearchUserByHandleEvent>(_onSearchUser);
+    on<GetGroupMembersEvent>(_onGetGroupMembers);
     on<AddUserToGroupEvent>(_onAddUserToGroup);
+    on<RemoveUserFromGroupEvent>(_onRemoveUserFromGroup);
+    on<UpdateGroupNameEvent>(_onUpdateGroupName);
   }
 
   FutureOr<void> _onCreateGroup(
@@ -109,6 +122,53 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     result.fold(
       (failure) => emit(GroupErrorState(message: failure.message)),
       (_) => emit(UserAddedToGroupState()),
+    );
+  }
+
+  FutureOr<void> _onGetGroupMembers(GetGroupMembersEvent event, Emitter<GroupState> emit) async {
+    emit(GroupMembersLoadingState());
+    final result = await getGroupMembers(event.groupId);
+    result.fold(
+      (failure) => emit(GroupErrorState(message: failure.message)),
+      (members) => emit(GroupMembersLoadedState(members: members)),
+    );
+  }
+
+  FutureOr<void> _onRemoveUserFromGroup(
+    RemoveUserFromGroupEvent event,
+    Emitter<GroupState> emit,
+  ) async {
+    emit(GroupLoadingState());
+    final result = await removeUserFromGroup(
+      RemoveUserFromGroupParams(
+        groupId: event.groupId,
+        userId: event.userId,
+      ),
+    );
+    result.fold(
+      (failure) => emit(GroupErrorState(message: failure.message)),
+      (_) {
+        emit(UserRemovedFromGroupState());
+        // Refresh the group members list after removal
+        add(GetGroupMembersEvent(groupId: event.groupId));
+      },
+    );
+  }
+
+  FutureOr<void> _onUpdateGroupName(
+    UpdateGroupNameEvent event,
+    Emitter<GroupState> emit,
+  ) async {
+    emit(GroupLoadingState());
+    final result = await updateGroupName(
+      UpdateGroupnameParams(
+        groupId: event.groupId,
+        newName: event.newName,
+      ),
+    );
+    result.fold(
+      (failure) => emit(GroupErrorState(message: failure.message)),
+      (_) => emit(GroupNameUpdatedState(newName: event.newName)),
     );
   }
 }

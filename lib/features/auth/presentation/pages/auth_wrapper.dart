@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inventry_app/core/firebase/firebase_messaging.dart';
+import 'package:inventry_app/core/widgets/premium_widgets.dart';
 import 'package:inventry_app/features/group/presentation/pages/home_page.dart';
 import 'package:inventry_app/features/auth/presentation/pages/otp_page.dart';
 import 'package:inventry_app/features/auth/presentation/pages/phone_page.dart';
@@ -17,6 +18,7 @@ class AuthWrapper extends StatefulWidget {
 }
 
 class _AuthWrapperState extends State<AuthWrapper> {
+ 
   // bool _hasTriggeredUserCheck = false;
 
   @override
@@ -44,25 +46,36 @@ class _AuthWrapperState extends State<AuthWrapper> {
               context.read<UserBloc>().add(IsNewUserEvent(uid: user.uid));
             });
 
-            // if (!_hasTriggeredUserCheck) {
-            //   _hasTriggeredUserCheck = true;
-            //   WidgetsBinding.instance.addPostFrameCallback((_) {
-            //     context.read<UserBloc>().add(IsNewUserEvent(uid: user.uid));
-            //   });
-            // }
-
             return BlocConsumer<UserBloc, UserState>(
               listener: (context, userState) {
                 if (userState is UserCreatedInFirestore) {
                   context.read<UserBloc>().add(LoadUserEvent());
                 }
+
               },
               builder: (context, userState) {
                 if (userState is UserLoading) {
-                  return const Scaffold(
-                    body: Center(child: CircularProgressIndicator(color: Colors.green,)),
+                  return Scaffold(
+                    body: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(context).colorScheme.secondary,
+                          ],
+                        ),
+                      ),
+                      child: const Center(
+                        child: PremiumLoadingWidget(
+                          message: "Loading your account...",
+                        ),
+                      ),
+                    ),
                   );
-                } else if (userState is NewUserState || userState is AvatarsLoaded) {
+                } else if (userState is NewUserState ||
+                    userState is AvatarsLoaded) {
                   return NewUserOnboardingPage(
                     uid: user.uid,
                     phone: user.phoneNumber,
@@ -91,14 +104,30 @@ class _AuthWrapperState extends State<AuthWrapper> {
                   );
                 }
 
-                return const Scaffold(
-                  body: Center(child: CircularProgressIndicator(color: Colors.green,)),
+                return Scaffold(
+                  body: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Theme.of(context).colorScheme.primary,
+                          Theme.of(context).colorScheme.secondary,
+                        ],
+                      ),
+                    ),
+                    child: const Center(
+                      child: PremiumLoadingWidget(message: "Authenticating..."),
+                    ),
+                  ),
                 );
               },
             );
           } else if (authState is AuthLoadingState) {
             return const Scaffold(
-              body: Center(child: CircularProgressIndicator(color: Colors.green,)),
+              body: Center(
+                child: CircularProgressIndicator(color: Colors.green),
+              ),
             );
           } else if (authState is OtpSentState) {
             return OtpVerificationPage(
@@ -106,6 +135,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
             );
           } else {
             // _hasTriggeredUserCheck = false;
+            context.read<UserBloc>().add(ResetUserEvent());
             return PhoneVerificationPage();
           }
         },

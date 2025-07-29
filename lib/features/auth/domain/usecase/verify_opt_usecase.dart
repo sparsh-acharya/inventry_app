@@ -5,13 +5,13 @@ import 'package:inventry_app/core/utils/usecase.dart';
 import 'package:inventry_app/features/auth/domain/entity/user_entity.dart';
 import 'package:inventry_app/features/auth/domain/repo/auth_repo.dart';
 
-class VerifyOptUsecase extends UseCase<UserEntity,VerifyOTPParams> {
+class VerifyOptUsecase extends UseCase<AuthUserEntity,VerifyOTPParams> {
   final AuthRepository repo;
 
   VerifyOptUsecase({required this.repo});
 
   @override
-  FutureEither<UserEntity> call(VerifyOTPParams param) {
+  FutureEither<AuthUserEntity> call(VerifyOTPParams param) {
     return repo.verifyOtp(param.verificationId, param.otp);
   }
 }

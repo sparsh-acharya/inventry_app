@@ -14,4 +14,5 @@ abstract class UserRepository {
   FutureEither<UserEntity?> findUserByHandle(String handle);
   FutureEither<String?> requestFCMToken();
   FutureVoid saveFCMToken(String token);
+  FutureVoid deleteFCMToken();
 }

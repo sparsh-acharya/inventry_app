@@ -16,11 +16,11 @@ class FirebaseUserDatasourceImpl implements UserDatasource {
   @override
   FutureEither<UserModel?> getCurrentUser() async {
     try {
-      final user = await _fireFunc.currentUser();
+      final user = await _fireFunc.getUserData();
       if (user != null) {
         return Right(user);
       }
-      return Left(FirebaseError(message: 'USER NOT FOUND'));
+      return Left(FirebaseError(message: 'USER DATA NOT FOUND'));
     } on FirebaseException catch (e) {
       return Left(FirebaseError(message: e.toString()));
     }
@@ -41,13 +41,29 @@ class FirebaseUserDatasourceImpl implements UserDatasource {
     try {
       final user = await _fireFunc.currentUser();
       if (user != null) {
-        await _firestore
-            .collection('users')
-            .doc(user.uid)
-            .set({'fcmToken': token}, SetOptions(merge: true));
+        await _firestore.collection('users').doc(user.uid).set({
+          'fcmToken': token,
+        }, SetOptions(merge: true));
         return const Right(null);
       }
       return Left(FirebaseError(message: "No user is signed in."));
+    } catch (e) {
+      return Left(FirebaseError(message: e.toString()));
+    }
+  }
+
+  @override
+  FutureVoid deleteFCMToken() async {
+    try {
+      await _firebaseMessaging.deleteToken();
+      final user = await _fireFunc.currentUser();
+      if (user != null) {
+        await _firestore.collection('users').doc(user.uid).set({
+          'fcmToken': null,
+        }, SetOptions(merge: true));
+        return const Right(null);
+      }
+      return const Right(null);
     } catch (e) {
       return Left(FirebaseError(message: e.toString()));
     }
@@ -104,8 +120,9 @@ class FirebaseUserDatasourceImpl implements UserDatasource {
     required String displayName,
     String? avatarUrl,
   }) async {
-    final handleDocRef =
-        _firestore.collection('userHandles').doc(handle.toLowerCase());
+    final handleDocRef = _firestore
+        .collection('userHandles')
+        .doc(handle.toLowerCase());
     final userDocRef = _firestore.collection('users').doc(uid);
 
     try {
@@ -120,16 +137,13 @@ class FirebaseUserDatasourceImpl implements UserDatasource {
         transaction.set(handleDocRef, {'uid': uid});
 
         // 2. Set the user's display name and handle
-        transaction.set(
-            userDocRef,
-            {
-              'uid': uid,
-              'phone': phone,
-              'displayName': displayName,
-              'userHandle': handle,
-              if (avatarUrl != null) 'avatarUrl': avatarUrl,
-            },
-            SetOptions(merge: true));
+        transaction.set(userDocRef, {
+          'uid': uid,
+          'phone': phone,
+          'displayName': displayName,
+          'userHandle': handle,
+          if (avatarUrl != null) 'avatarUrl': avatarUrl,
+        }, SetOptions(merge: true));
       });
       return const Right(null);
     } catch (e) {
@@ -140,10 +154,11 @@ class FirebaseUserDatasourceImpl implements UserDatasource {
   @override
   FutureEither<UserModel?> findUserByHandle(String handle) async {
     try {
-      final handleQuery = await _firestore
-          .collection('userHandles')
-          .doc(handle.toLowerCase())
-          .get();
+      final handleQuery =
+          await _firestore
+              .collection('userHandles')
+              .doc(handle.toLowerCase())
+              .get();
 
       if (!handleQuery.exists) {
         return Left(FirebaseError(message: 'User with this handle not found.'));

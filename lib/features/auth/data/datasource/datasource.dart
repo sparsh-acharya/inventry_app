@@ -9,7 +9,7 @@ abstract class AuthDatasource {
     Function(String) onCodeSent,
     Function(String)? onAutoVerified,
   );
-  FutureEither<UserModel> verifyOTP(String verificationId, String otp);
-  FutureEither<UserModel?> getCurrentUser();
+  FutureEither<AuthUserModel> verifyOTP(String verificationId, String otp);
+  FutureEither<AuthUserModel?> getCurrentUser();
   FutureVoid signOut();
 }

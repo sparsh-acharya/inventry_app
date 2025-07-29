@@ -21,7 +21,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  FutureEither<UserEntity> verifyOtp(
+  FutureEither<AuthUserEntity> verifyOtp(
     String verificationId,
     String otp,
   ) async {
@@ -34,7 +34,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  FutureEither<UserEntity?> getCurrentUser() {
+  FutureEither<AuthUserEntity?> getCurrentUser() {
     return datasource.getCurrentUser();
   }
 
