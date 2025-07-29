@@ -1,175 +1,226 @@
-# Inventory App - Phone Authentication
 
-A Flutter application with Firebase phone authentication using clean architecture and BLoC state management.
+# 📦 Zaiko - Inventory Management App
 
-## Features
+Zaiko is a collaborative, real-time inventory management system built with Flutter using **Feature-First Clean Architecture** and **BLoC** for state management. It leverages Firebase for authentication, cloud storage, and real-time updates.
 
-- ✅ Phone number verification using Firebase Auth
-- ✅ Clean Architecture (Data, Domain, Presentation layers)
-- ✅ BLoC state management
-- ✅ Feature-first folder structure
-- ✅ Dependency injection
-- ✅ Modern UI with Material Design 3
+---
 
-## Architecture
+## 🧱 Project Structure
 
-The app follows clean architecture principles with feature-first organization:
+The app uses **Feature-First Clean Architecture**, organized into the following layers:
 
 ```
 lib/
+│
+├── core/                 # Shared utilities (theme, firebase functions, failures, widgets, etc.)
+├── features/             # Feature-specific logic (auth, groups, items, etc.)
+│   └── [feature]/
+│       ├── data/         # Data layer (models, data sources, repository implementations)
+│       ├── domain/       # Domain layer (entities, use cases, repository interfaces)
+│       └── presentation/ # UI layer (blocs, screens, widgets)
+├── injector/             # Dependency injection setup
+├── firebase_options.dart# Firebase configuration
+└── main.dart             # Entry point
+```
+
+---
+
+## 🧠 Clean Architecture Overview
+
+Each feature follows **3-layered clean architecture**:
+
+1. **Data Layer**: Implements APIs, Firebase interactions, and persistence.
+2. **Domain Layer**: Contains core business logic - entities, use cases, and repository interfaces.
+3. **Presentation Layer**: UI logic and BLoC for state management.
+
+🔁 **Dependency Rule**:
+`Presentation → Domain → Data`
+
+✅ Ensures:
+- Separation of concerns
+- Reusability
+- Testability
+- Scalability
+
+---
+
+## 🚀 Features
+
+Each feature is implemented using its own folder with all layers encapsulated inside.
+
+### ✅ Auth Feature
+- Phone number authentication using Firebase
+- OTP handling
+- Session persistence
+- Sign-out
+
+### 👥 Group Management
+- Create, join, and view groups
+- Group membership with admin privileges
+- Add/remove users (admin only)
+
+### 📦 Inventory Items
+- Add/edit/delete items within a group
+- Quantity tracking
+- Collaborative updates
+- Low-stock notifications (planned)
+
+---
+
+## 🧩 State Management
+
+**Library Used**: `flutter_bloc`
+**Pattern**: BLoC (Business Logic Component)
+
+Each feature has its own Bloc/Cubit and handles:
+- State emissions (`Initial`, `Loading`, `Loaded`, `Error`)
+- Event-driven UI updates
+- Unidirectional data flow
+
+Example:
+```
+lib/features/auth/presentation/bloc/auth_bloc.dart
+lib/features/group/presentation/bloc/group_bloc.dart
+```
+
+Benefits:
+- Testable and modular logic
+- Clear separation of UI and logic
+- Ideal for complex apps with async data flow
+
+---
+
+## 🔧 Technical Stack
+
+| Layer           | Technology         |
+|----------------|--------------------|
+| UI              | Flutter            |
+| State Mgmt      | BLoC               |
+| Architecture    | Clean + Feature-First |
+| Authentication  | Firebase Phone Auth |
+| Backend (BaaS)  | Firebase Firestore |
+| Notifications   | Firebase Messaging |
+| Dependency Inj. | `get_it`, `injector.dart` |
+
+
+---
+
+## 🛠 Core Utilities
+
+Shared across all features:
+
+- `core/errors/failure.dart` – unified failure handling
+- `core/firebase/firebase_functions.dart` – reusable Firebase operations
+- `core/utils/usecase.dart` – base use case contract
+- `core/theme/` – color schemes and app theme
+- `core/widgets/` – reusable UI components
+
+---
+
+## 📂 Dependency Injection
+
+Zaiko uses `get_it` for managing dependencies and services globally via:
+
+```dart
+lib/injector/injector.dart
+```
+
+Each repository, use case, and BLoC is registered and resolved through a centralized container.
+
+---
+
+## 🔥 Firebase Integration
+
+Zaiko uses Firebase extensively:
+
+- **Authentication**: via Phone Auth
+- **Firestore**: for real-time data (groups, items, users)
+- **Messaging**: push notifications (low inventory alerts, group invites)
+- `firebase_options.dart` is auto-generated for project config
+
+---
+
+## 🔐 Security & Roles
+
+- Each group has an **admin** user
+- Admins can **add/remove** members
+- **Role-based access** enforced in Firestore logic
+
+---
+
+## 📱 UI Overview
+
+### Auth Flow
+- Phone input screen
+- OTP verification screen
+- Authenticated home screen
+
+### Main App
+- Group selection screen
+- Inventory list (with add/edit/delete)
+- Group settings
+
+---
+
+## 🧪 Testing
+
+✅ Recommended:
+- **Unit Tests** for use cases and bloc logic
+- **Widget Tests** for UI components
+
+📁 Suggest creating:
+```
+test/
 ├── features/
-│   └── auth/
-│       ├── data/
-│       │   ├── datasource/
-│       │   │   └── auth_remote_datasource.dart
-│       │   ├── models/
-│       │   │   └── user_model.dart
-│       │   └── repo/
-│       │       └── auth_repository_impl.dart
-│       ├── domain/
-│       │   ├── entity/
-│       │   │   └── user_entity.dart
-│       │   ├── repo/
-│       │   │   └── auth_repository.dart
-│       │   └── usecase/
-│       │       ├── get_current_user_usecase.dart
-│       │       ├── send_phone_verification_usecase.dart
-│       │       ├── sign_out_usecase.dart
-│       │       └── verify_phone_code_usecase.dart
-│       ├── presentation/
-│       │   ├── bloc/
-│       │   │   ├── auth_bloc.dart
-│       │   │   ├── auth_event.dart
-│       │   │   └── auth_state.dart
-│       │   ├── pages/
-│       │   │   ├── phone_verification_page.dart
-│       │   │   ├── otp_verification_page.dart
-│       │   │   └── home_page.dart
-│       │   └── widgets/
-│       │       ├── phone_input_widget.dart
-│       │       └── otp_input_widget.dart
-│       └── di/
-│           └── auth_injection.dart
-├── firebase_options.dart
-└── main.dart
+│   ├── auth/
+│   ├── group/
+│   └── item/
+└── core/
 ```
 
-## Setup Instructions
+---
 
-### 1. Firebase Configuration
+## 📦 Build & Run
 
-1. Create a new Firebase project at [Firebase Console](https://console.firebase.google.com/)
-2. Add your Android/iOS app to the project
-3. Download the configuration files:
-   - `google-services.json` for Android (place in `android/app/`)
-   - `GoogleService-Info.plist` for iOS (place in `ios/Runner/`)
-4. Enable Phone Authentication in Firebase Console:
-   - Go to Authentication > Sign-in method
-   - Enable Phone Number provider
-   - Add test phone numbers if needed
+### 🔧 Prerequisites
 
-### 2. Dependencies
+- Flutter SDK (3.x)
+- Firebase project (with Phone Auth enabled)
+- Firestore and Messaging setup
+- Emulator or physical device
 
-The following dependencies are already included in `pubspec.yaml`:
-
-```yaml
-dependencies:
-  flutter:
-    sdk: flutter
-  firebase_auth: ^5.6.2
-  firebase_core: ^3.15.1
-  flutter_bloc: ^9.1.1
-  equatable: ^2.0.5
-```
-
-### 3. Run the App
+### ▶️ Run App
 
 ```bash
 flutter pub get
 flutter run
 ```
 
-## Usage
+---
 
-1. **Phone Verification**: Enter your phone number to receive a verification code
-2. **OTP Verification**: Enter the 6-digit code sent to your phone
-3. **Authentication**: Once verified, you'll be redirected to the home page
-4. **Sign Out**: Use the logout button in the app bar to sign out
+## 🛠 Future Improvements
 
-## Key Components
+- Add low-inventory push notifications
+- Item history logs
+- Image uploads (Firebase Storage)
+- Testing suite with coverage
+- Admin panel UI for managing groups
+- Offline support with local cache
 
-### Domain Layer
-- **UserEntity**: Core user data model
-- **AuthRepository**: Abstract interface for authentication operations
-- **Use Cases**: Business logic for authentication operations
+---
 
-### Data Layer
-- **AuthRemoteDataSource**: Firebase Auth implementation
-- **UserModel**: Data model extending UserEntity
-- **AuthRepositoryImpl**: Repository implementation
+## 🧑‍💻 Contributing
 
-### Presentation Layer
-- **AuthBloc**: State management for authentication
-- **AuthEvent**: Events for authentication operations
-- **AuthState**: States for authentication flow
-- **Pages**: UI screens for phone verification and OTP
-- **Widgets**: Reusable UI components
+Want to improve Zaiko?
 
-## State Management
+1. Fork the repo
+2. Create a feature branch
+3. Make changes with clean architecture
+4. Write tests
+5. Submit a PR
 
-The app uses BLoC pattern for state management:
+---
 
-- **AuthInitial**: Initial state
-- **AuthLoading**: Loading state during operations
-- **PhoneVerificationSent**: When verification code is sent
-- **AuthSuccess**: When user is authenticated
-- **AuthFailure**: When authentication fails
-- **AuthSignedOut**: When user signs out
+## 📄 License
 
-## Error Handling
-
-The app includes comprehensive error handling:
-- Network errors
-- Invalid phone numbers
-- Invalid OTP codes
-- Firebase authentication errors
-
-## Testing
-
-To test the phone authentication:
-1. Use a real phone number for production testing
-2. Use test phone numbers configured in Firebase Console for development
-3. Firebase provides test OTP codes for development
-
-## Security Considerations
-
-- Phone numbers are validated before sending verification codes
-- OTP codes are handled securely through Firebase
-- User sessions are managed by Firebase Auth
-- Sign out functionality clears user session
-
-## Future Enhancements
-
-- [ ] Add email authentication
-- [ ] Implement user profile management
-- [ ] Add biometric authentication
-- [ ] Implement offline support
-- [ ] Add unit and widget tests
-- [ ] Implement proper error handling with retry mechanisms
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Firebase not initialized**: Ensure `firebase_options.dart` is properly configured
-2. **Phone verification fails**: Check if phone authentication is enabled in Firebase Console
-3. **OTP not received**: Verify phone number format and Firebase configuration
-4. **Build errors**: Run `flutter clean` and `flutter pub get`
-
-### Debug Mode
-
-For development, you can use test phone numbers and Firebase will provide test OTP codes in the console.
-
-## License
-
-This project is for educational purposes. Feel free to use and modify as needed.
+MIT License – feel free to use and modify.
